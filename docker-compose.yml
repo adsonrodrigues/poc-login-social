@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  service:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: adsonrodrigues/poc-login-social
+    volumes:
+      - .:/usr/local/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+    env_file:
+      - ./poc_login_social/.env
+    stdin_open: true
+    tty: true
+    networks:
+      - poc-login-social
+
+  postgres:
+    image: postgres:13
+    volumes:
+      - poc_postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root1234
+      - POSTGRES_DB=poc_login
+    ports:
+      - 5432:5432
+    networks:
+      - poc-login-social
+
+volumes:
+  poc_postgres_data:
+
+networks:
+  poc-login-social:
+    name: poc-login-social
+    driver: bridge
